@@ -66,30 +66,50 @@ function view_email(id) {
     // fill single-email-view
     document.querySelector('#email-subject').innerHTML = email.subject;
     document.querySelector('#sender').innerHTML = email.sender;
-    document.querySelector('#recipients').innerHTML = email.recipients;
+    document.querySelector('#recipients').innerHTML = email.recipients.join(', ');
     document.querySelector('#body').innerHTML = email.body;
     document.querySelector('#timestamp').innerHTML = email.timestamp;
-  })
 
-  // change read status
-  fetch(`/emails/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify({
-      read: true
-    })
-  });
-
-  // change archive status
-  document.querySelector('#archive').addEventListener('click', function() {
+    // change read status
     fetch(`/emails/${id}`, {
       method: 'PUT',
       body: JSON.stringify({
-        archived: true
+        read: true
       })
     });
 
-    // redirect to archived
-    load_mailbox('archive');
+    // archive button status
+    document.querySelector("#archive").innerHTML = email.archived ? 'Move to Inbox' : 'Archive';
+
+    // change archive status
+    document.querySelector('#archive').onclick = function() {
+      if (!email.archived) {
+        console.log('archiving...')
+
+        fetch(`/emails/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            archived: true
+          })
+        })
+        .then(() => {
+          load_mailbox('inbox');
+        });
+
+      } else {
+        console.log('un-archiving...');
+
+        fetch(`/emails/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            archived: false
+          })
+        })
+        .then(() => {
+          load_mailbox('archive');
+        });
+      }
+    };
   });
 }
 
