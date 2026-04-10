@@ -52,6 +52,26 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
+function reply(sender, subject, body, timestamp) {
+
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#single-email-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+
+  // Clear and fill composition fields
+  document.querySelector('#compose-recipients').value = sender;
+  document.querySelector('#compose-subject').value = subject.startsWith('Re:') ? subject : `Re: ${subject}`;
+  document.querySelector('#compose-body').value = `
+
+    On ${timestamp} ${sender} wrote:
+    ${body}
+  `;
+
+  // TODO
+  document.querySelector('#compose-body').classList.add = 'autofocus';
+}
+
 function view_email(id) {
 
   // show single-email-view and hide other views
@@ -106,10 +126,16 @@ function view_email(id) {
           })
         })
         .then(() => {
-          load_mailbox('archive');
+          load_mailbox('inbox');
         });
       }
     };
+
+    // reply
+    document.querySelector('#reply').onclick = function() {
+      reply(email.sender, email.subject, email.body, email.timestamp)
+    };
+
   });
 }
 
