@@ -51,6 +51,10 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
+function view_email(id) {
+  
+}
+
 function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
@@ -66,16 +70,44 @@ function load_mailbox(mailbox) {
     .then(emails => {
       // Print emails
       console.log(emails);
-      
-      const ul = document.createElement('ul');
-      ul.className = 'list-group';
-      document.querySelector('#emails-view').append(ul);
 
+      // sort emails
+      emails.sort((a, b) => {
+        return new Date(b.timestamp) - new Date(a.timestamp);
+      });
+
+      // container for emails
+      const container = document.createElement('div');
+      document.querySelector('#emails-view').appendChild(container);
+
+      // header
+      const header = document.createElement('div');
+      header.className = 'd-flex justify-content-between align-items-center border p-2 mb-1';
+      header.innerHTML = '<div><strong>Sender</strong></div><div><strong>Subject</strong></div><div><strong>Date</strong></div>';
+      container.appendChild(header);
+
+      // display emails
       emails.forEach(email => {
-        const li = document.createElement('li');
-        li.className = 'list-group-item';
-        li.innerHTML = (`${email.sender} ${email.subject} ${email.timestamp}`);
-        document.querySelector('ul').append(li);
+        const row = document.createElement('div');
+
+        // bootstrap
+        row.className = 'd-flex justify-content-between align-items-center border p-2 mb-1';
+
+        // form a row
+        row.innerHTML = `
+        <div>${email.sender}</div>
+        <div>${email.subject}</div>
+        <div class="text-muted">${email.timestamp}</div>
+        `
+
+        // clickable
+        row.style.cursor = 'pointer';
+        row.onclick = function() {
+          view_email(email.id);
+        };
+
+        // insert into container
+        container.appendChild(row)
       });
     });
 }
