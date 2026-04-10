@@ -30,6 +30,15 @@
             <input type="submit" class="btn btn-primary"/>
         </form>
     </div>
+
+    <div id="single-email-view">
+        <h3 id="email-subject"></h3>
+        <label for="sender">From:</label><div id="sender" class="form-group border rounded p-2"></div>
+        <label for="recipients">To:</label><div id="recipients" class="form-group border rounded p-2"></div>
+        <label for="body">Message:</label><div id="body" class="form-group border rounded p-2"></div>
+        <div id="timestamp" class="form-group p-1"></div>
+        <button class="btn btn-primary" id="archive">Archive</button>
+    </div>
 {% endblock %}
 
 {% block script %}

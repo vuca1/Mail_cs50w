@@ -31,10 +31,10 @@ function send_email(recipients, subject, body) {
   })
   .then(response => response.json())
   .then(result => {
-    // Print result
-    console.log(result);
+    // Print result  
+    console.log(result)
 
-    // redirect to sent mailbox
+  // redirect to sent mailbox
   load_mailbox('sent');
   });
 }
@@ -43,6 +43,7 @@ function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#single-email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
@@ -52,7 +53,44 @@ function compose_email() {
 }
 
 function view_email(id) {
-  
+
+  // show single-email-view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#single-email-view').style.display = 'block';
+
+  // fetch an email
+  fetch(`/emails/${id}`)
+  .then(response => response.json())
+  .then(email => {
+    // fill single-email-view
+    document.querySelector('#email-subject').innerHTML = email.subject;
+    document.querySelector('#sender').innerHTML = email.sender;
+    document.querySelector('#recipients').innerHTML = email.recipients;
+    document.querySelector('#body').innerHTML = email.body;
+    document.querySelector('#timestamp').innerHTML = email.timestamp;
+  })
+
+  // change read status
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      read: true
+    })
+  });
+
+  // change archive status
+  document.querySelector('#archive').addEventListener('click', function() {
+    fetch(`/emails/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        archived: true
+      })
+    });
+
+    // redirect to archived
+    load_mailbox('archive');
+  });
 }
 
 function load_mailbox(mailbox) {
@@ -60,6 +98,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#single-email-view').style.display = 'none';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -93,13 +132,17 @@ function load_mailbox(mailbox) {
         // bootstrap
         row.className = 'd-flex justify-content-between align-items-center border p-2 mb-1';
 
+        // read/unread style
+        if (email.read) {
+          row.style.backgroundColor = '#f1f1f1';
+        }
+
         // form a row
         row.innerHTML = `
         <div>${email.sender}</div>
         <div>${email.subject}</div>
         <div class="text-muted">${email.timestamp}</div>
         `
-
         // clickable
         row.style.cursor = 'pointer';
         row.onclick = function() {
