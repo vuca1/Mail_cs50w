@@ -32,13 +32,14 @@
     </div>
 
     <div id="single-email-view">
-        <h3 id="email-subject"></h3>
-        <label for="sender">From:</label><div id="sender" class="form-group border rounded p-2"></div>
-        <label for="recipients">To:</label><div id="recipients" class="form-group border rounded p-2"></div>
-        <label for="body">Message:</label><div id="body" class="form-group border rounded p-2"></div>
-        <div id="timestamp" class="form-group p-1"></div>
+        <h5 id="email-subject" class="form-group"></h5>
+        <p><strong>From: </strong><span id="sender"></span></p>
+        <p><strong>To: </strong><span id="recipients"></span></p>
+        <p id="timestamp" class="text-muted"></p>
         <button class="btn btn-primary" id="archive">Archive</button>
         <button class="btn btn-primary" id="reply">Reply</button>
+        <hr>
+        <div id="body" class="form-group p-2"></div>
     </div>
 {% endblock %}
 
